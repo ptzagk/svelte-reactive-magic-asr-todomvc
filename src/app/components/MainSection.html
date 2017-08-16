@@ -1,0 +1,67 @@
+<section class="main">
+    {{#if todos.length > 0}}
+        <input class="toggle-all"
+            type="checkbox"
+            checked={{ completedCount === todos.length }} />
+        <label on:click="onCompleteAll()" />
+    {{/if}}
+
+    <ul class="todo-list">
+        {{#each filteredTodos as todo}}
+            <TodoItem todo={{todo}} />
+        {{/each}}
+    </ul>
+
+    <Footer completedCount={{completedCount}}
+        activeCount={{ todos.length - completedCount }}
+        selectedFilter={{filter}}
+        on:show="onShow(event)" />
+</section>
+
+<script>
+    import Footer from './Footer.html'
+    import TodoItem from './TodoItem.html'
+    import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../../store/constants/TodoFilters'
+    import { completeAll } from 'store'
+
+    export default {
+        components: {
+            Footer,
+            TodoItem
+        },
+
+        data () {
+            return {
+                filter: SHOW_ALL,
+                todos: []
+            }
+        },
+
+        computed: {
+            filteredTodos: (todos, filter) => {
+                switch(filter) {
+                    case SHOW_ALL:
+                        return todos
+
+                    case SHOW_COMPLETED:
+                        return todos.filter(t => t.completed)
+
+                    case SHOW_ACTIVE:
+                        return todos.filter(t => !t.completed)
+                }
+            },
+
+            completedCount: (todos) => todos.reduce((count, todo) => todo.completed ? count + 1 : count, 0)
+        },
+
+        methods: {
+            onCompleteAll() {
+                completeAll()
+            },
+
+            onShow (filter) {
+                this.set({ filter })
+            }
+        }
+    }
+</script>

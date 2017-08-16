@@ -1,0 +1,70 @@
+<li class="{{ classnames({ completed: todo.completed, editing: editing }) }}">
+
+    {{#if editing}}
+        <TodoTextInput text={{todo.text}} editing={{editing}} on:save="onSave(todo.id, event)" on:blur="set({ editing: false })" />
+    {{else}}
+        <div class="view">
+            <input class="toggle"
+                type="checkbox"
+                checked={{todo.completed}}
+                on:change="onCompleteTodo(todo.id)" />
+            <label on:click="onClick()">
+                {{ todo.text }}
+            </label>
+            <button class="destroy"
+                on:click="onDeleteTodo(todo.id)" />
+        </div>
+    {{/if}}
+
+</li>
+
+<script>
+    import TodoTextInput from './TodoTextInput.html'
+    import classnames from 'classnames'
+    import { completeTodo, deleteTodo, editTodo } from 'store'
+
+    export default {
+        components: {
+            TodoTextInput
+        },
+
+        data () {
+            return {
+                todo: {
+                    completed: false,
+                    id: 0,
+                    text: ''
+                },
+                editing: false
+            }
+        },
+
+        helpers: {
+            classnames
+        },
+
+        methods: {
+            onClick () {
+                this.set({ editing: true })
+            },
+
+            onSave (id, text) {
+                if (text.length === 0) {
+                    this.deleteTodo(id)
+                } else {
+                    editTodo(id, text)
+                }
+
+                this.set({ editing: false })
+            },
+
+            onDeleteTodo (id) {
+                deleteTodo(id)
+            },
+
+            onCompleteTodo (id) {
+                completeTodo(id)
+            }
+        }
+    }
+</script>

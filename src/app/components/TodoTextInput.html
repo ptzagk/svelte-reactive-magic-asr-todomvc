@@ -1,0 +1,51 @@
+<input class="{{ classnames({ edit: editing, 'new-todo': newTodo }) }}"
+    type="text"
+    placeholder="{{ placeholder }}"
+    autoFocus=true
+    bind:value="text"
+    on:blur="handleBlur(event)"
+    on:keydown="handleSubmit(event)"
+/>
+
+<script>
+    import classnames from 'classnames'
+
+    export default {
+        data () {
+            return {
+                text: '',
+                placeholder: '',
+                editing: false,
+                newTodo: false
+            }
+        },
+
+        helpers: {
+            classnames
+        },
+
+        methods: {
+            handleBlur (e) {
+                const newTodo = this.get('newTodo')
+
+                if (!newTodo) {
+                    this.fire('save', e.target.value)
+                }
+
+                this.fire('blur')
+            },
+
+            handleSubmit (e) {
+                const text = e.target.value.trim(),
+                    newTodo = this.get('newTodo')
+
+                if (e.which === 13) {
+                    this.fire('save', text)
+                    if (newTodo) {
+                        this.set({ text: '' })
+                    }
+                }
+            }
+        }
+    }
+</script>

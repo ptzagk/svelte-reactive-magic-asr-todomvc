@@ -1,0 +1,21 @@
+<header class="header">
+    <h1>todos</h1>
+    <TodoTextInput newTodo=true on:save="onSave(event)" placeholder="What needs to be done?" />
+</header>
+
+<script>
+    import TodoTextInput from './TodoTextInput.html'
+    import { addTodo } from 'store'
+
+    export default {
+        components: {
+            TodoTextInput
+        },
+
+        methods: {
+            onSave (text) {
+                addTodo(text)
+            }
+        }
+    }
+</script>

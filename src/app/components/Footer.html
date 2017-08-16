@@ -1,0 +1,67 @@
+<footer class="footer">
+    <span class="todo-count">
+        <strong>{{ activeCount | 'No' }}</strong>
+        {{ activeCount === 1 ? 'item' : 'items' }} left
+    </span>
+
+    <ul class="filters">
+        {{#each filters as filter}}
+            <li key={{filter}}>
+                <a class="{{ classnames({ selected: filter === selectedFilter }) }}"
+                    on:click="onShow(filter)">
+                    {{ filterTitle(filter) }}
+                </a>
+            </li>
+        {{/each}}
+    </ul>
+
+    {{#if completedCount > 0}}
+        <button class="clear-completed"
+            on:click="onClearCompleted()">
+            Clear Completed
+        </button>
+    {{/if}}
+</footer>
+
+<script>
+    import classnames from 'classnames'
+    import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../../store/constants/TodoFilters'
+    import { clearCompleted } from 'store'
+
+    export default {
+        data () {
+            return {
+                completedCount: 0,
+                activeCount: 0,
+                selectedFilter: SHOW_ALL,
+                filters: [ SHOW_ALL, SHOW_ACTIVE, SHOW_COMPLETED ]
+            }
+        },
+
+        helpers: {
+            classnames, 
+            filterTitle: (filter) => {
+                switch(filter) {
+                    case SHOW_ALL:
+                        return 'All'
+
+                    case SHOW_ACTIVE:
+                        return 'Active'
+
+                    case SHOW_COMPLETED:
+                        return 'Completed'
+                }
+            }
+        },
+
+        methods: {
+            onShow (filter) {
+                this.fire('show', filter)
+            },
+
+            onClearCompleted () {
+                clearCompleted()
+            }
+        }
+    }
+</script>
