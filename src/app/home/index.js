@@ -1,9 +1,10 @@
+import { DerivedValue } from 'reactive-magic'
 import Home from './Home.html'
 import store from 'store'
 
-function selector(state) {
+function selector() {
     return {
-        todos: state.todos
+        todos: store.todos.get()
     }
 }
 
@@ -13,13 +14,11 @@ export default function(stateRouter) {
         route: '/home',
         template: Home,
         resolve: (data, parameters, cb) => {
-            const state = store.getState()
-
-            cb(null, selector(state))
+            cb(null, selector())
         },
         activate: ({ domApi: svelte }) => {
-            const stream = store.subscribe(state => {
-                svelte.set(selector(state))
+            const stream = new DerivedValue(() => {
+                svelte.set(selector())
             })
 
             svelte.on('destroy', () => stream.stop())

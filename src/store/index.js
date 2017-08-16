@@ -1,18 +1,5 @@
 import { DerivedValue, Value } from 'reactive-magic'
 
-const todos = new Value([])
-
-function getState() {
-    return {
-        todos: todos.get()
-    }
-}
-
-function subscribe(cb) {
-    const derived = new DerivedValue(() => cb(getState()))
-    return derived.stop;
-}
-
 export function addTodo(text) {
     todos.update(todos => {
         todos.unshift({
@@ -63,7 +50,8 @@ export function editTodo(id, text) {
     }))
 }
 
+const todos = new Value([])
+
 export default {
-    getState,
-    subscribe
+    todos
 }
