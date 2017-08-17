@@ -16,7 +16,8 @@ var production = process.env.NODE_ENV === 'production';
 var plugins = [
   resolveAliases({
     aliases: {
-      'store': './src/store/index.js'
+      'store': './src/store/index.js',
+      'api': './src/api/index.js'
     },
     jsnext: true
   }),

@@ -1,53 +1,64 @@
 import { DerivedValue, Value } from 'reactive-magic'
+import * as api from 'api'
 
 export function addTodo(text) {
-    todos.update(todos => {
-        todos.unshift({
-            id: todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1) + 1,
-            completed: false,
-            text
-        })
-
-        return todos
-    })
+	const todo = {
+		order: todos.get().length,
+		title: text
+	}
+    api.addTodo(todo)
+	.then(todo => {
+		todos.update(todos => {
+			todos.unshift(todo)
+			return todos
+		})
+	})
 }
 
 export function clearCompleted() {
-    todos.update(todos => todos.filter(todo => !todo.completed))
+    todos.get().map(todo => {
+        if (todo.completed) {
+            deleteTodo(todo.id)
+        }
+    })
 }
 
 export function completeAll() {
-    todos.update(todos => {
-        const areAllMarked = todos.every(todo => todo.completed)
-        return todos.map(todo => {
-            todo.completed = !areAllMarked
-            return todo
-        })
+    todos.get().map(todo => {
+        if (!todo.completed) {
+            completeTodo(todo.id)
+        }
     })
 }
 
 export function completeTodo(id) {
-    todos.update(todos => todos.map(todo => {
-        if (todo.id === id) {
-            todo.completed = !todo.completed
-        }
+    const todo = todos.get().find(t => t.id === id)
 
-        return todo
-    }))
+    if (!todo) {
+	return
+    }
+
+    api.editTodo(id, { completed: !todo.completed })
+        .then(todo => {
+            todos.update(todos => todos.map(t => t.id === id ? todo : t))
+	})
 }
 
 export function deleteTodo(id) {
-    todos.update(todos => todos.filter(todo => todo.id !== id))
+    api.deleteTodo(id)
+        .then(todo => todos.update(todos =>
+	todos.filter(t => t.id !== id)))
 }
 
 export function editTodo(id, text) {
-    todos.update(todos => todos.map(todo => {
-        if (todo.id === id) {
-            todo.text = text
-        }
+    api.editTodo(id, { title: text})
+	.then(todo => {
+	    todos.update(todos => todos.map(t => t.id === id ? todo : t))
+	})
+}
 
-        return todo
-    }))
+export async function fetchTodos() {
+	todos.set(await api.getTodos())
 }
 
 const todos = new Value([])

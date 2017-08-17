@@ -1,10 +1,18 @@
 import { DerivedValue } from 'reactive-magic'
 import Home from './Home.html'
-import store from 'store'
+import store, { fetchTodos } from 'store'
+
+function sortTodos(a, b) {
+    if (a.order === b.order) {
+	return 0;
+    }
+
+    return a.order < b.order ? 1 : -1
+}
 
 function selector() {
     return {
-        todos: store.todos.get()
+        todos: store.todos.get().sort(sortTodos)
     }
 }
 
@@ -14,6 +22,8 @@ export default function(stateRouter) {
         route: '/home',
         template: Home,
         resolve: (data, parameters, cb) => {
+	    fetchTodos()
+
             cb(null, selector())
         },
         activate: ({ domApi: svelte }) => {

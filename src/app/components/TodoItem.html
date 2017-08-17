@@ -1,7 +1,7 @@
 <li class="{{ classnames({ completed: todo.completed, editing: editing }) }}">
 
     {{#if editing}}
-        <TodoTextInput text={{todo.text}} editing={{editing}} on:save="onSave(todo.id, event)" on:blur="set({ editing: false })" />
+        <TodoTextInput text={{todo.title}} editing={{editing}} on:save="onSave(todo.id, event)" on:blur="set({ editing: false })" />
     {{else}}
         <div class="view">
             <input class="toggle"
@@ -9,7 +9,7 @@
                 checked={{todo.completed}}
                 on:change="onCompleteTodo(todo.id)" />
             <label on:click="onClick()">
-                {{ todo.text }}
+                {{ todo.title }}
             </label>
             <button class="destroy"
                 on:click="onDeleteTodo(todo.id)" />
@@ -32,8 +32,9 @@
             return {
                 todo: {
                     completed: false,
-                    id: 0,
-                    text: ''
+                    id: '0',
+                    order: 1,
+                    title: ''
                 },
                 editing: false
             }

@@ -16,6 +16,7 @@
     "babel-preset-minify": "^0.2.0",
     "classnames": "^2.2.5",
     "cross-env": "^5.0.5",
+    "isomorphic-unfetch": "^2.0.0",
     "pushstate-server": "^3.0.1",
     "reactive-magic": "^1.9.0",
     "rollup": "^0.47.4",
